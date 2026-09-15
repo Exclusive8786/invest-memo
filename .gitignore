@@ -1,0 +1,12 @@
+# служебное
+node_modules/
+_smoke/
+*.log
+
+# системное
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# локальные эксперименты
+*.local.*

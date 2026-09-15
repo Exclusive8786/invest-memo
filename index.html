@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Инвестиционная памятка — стратегии, которые реально работают</title>
+<meta name="description" content="Практическая система накопления капитала за 15–20 лет: что покупать, как покупать (лесенка, усреднение), когда покупать. Калькуляторы, таблицы, актуальные цены.">
+<meta name="theme-color" content="#04070a">
+<meta property="og:title" content="Инвестиционная памятка — стратегии, которые реально работают">
+<meta property="og:description" content="Система накопления капитала за 15–20 лет с калькуляторами и актуальными ценами.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%2322c55e'/><path d='M24 66l16-20 13 13 23-30' stroke='%2304140a' stroke-width='9' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div id="readProgress"></div>
+
+<!-- ================= ШАПКА ================= -->
+<header class="header">
+  <div class="header-inner">
+    <a class="brand" href="#top">
+      <span class="brand-mark">₽</span>
+      <span class="brand-txt">
+        <b>Инвестиционная памятка</b>
+        <span>система на 15–20 лет</span>
+      </span>
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-label="Меню" aria-expanded="false">☰</button>
+    <nav class="nav" id="mainNav">
+      <a href="#rules">Правила</a>
+      <a href="#plan">Этапы</a>
+      <a href="#what">Что покупать</a>
+      <a href="#how">Как покупать</a>
+      <a href="#when">Когда покупать</a>
+      <a href="#calc">Калькуляторы</a>
+      <a href="#portfolio-mine">Мой портфель</a>
+      <a href="#market">Цены</a>
+      <a href="#quiz">Тест</a>
+    </nav>
+  </div>
+  <div class="ticker-wrap"><div id="ticker">Цены загружаются…</div></div>
+</header>
+
+<main id="top">
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="badge"><i></i> Система, а не прогнозы · обновлено для <span id="heroYear">2025</span></span>
+      <h1>Стратегии инвестирования, <em>которые реально работают</em></h1>
+      <p class="lead">
+        Цель: за 15–20 лет собрать капитал, который приносит доход, и не потерять его по дороге.
+        Здесь нет «горячих акций» и предсказаний рынка — только механика, которая работает десятилетиями:
+        что покупать на каждом этапе, как покупать (лесенка, усреднение, добавления) и когда действовать.
+      </p>
+      <div class="hero-cta">
+        <a class="btn primary" href="#calc">Открыть калькулятор капитала</a>
+        <a class="btn ghost" href="#plan">Мой план по этапам →</a>
+        <a class="btn ghost" href="#portfolio-mine">Собрать портфель</a>
+      </div>
+      <div class="hero-note">
+        <b>Как этим пользоваться.</b> Сайт работает как памятка: сначала прочитайте разделы
+        «Правила → Этапы → Что покупать», затем настройте калькуляторы под свои цифры и соберите портфель
+        в разделе «Мой портфель». Данные сохраняются в вашем браузере и никуда не отправляются.
+      </div>
+    </div>
+    <div>
+      <div class="hero-stats">
+        <div class="stat"><b data-count="25" data-suffix="×">0</b><span>расходов — целевой капитал при ставке изъятия 4%</span></div>
+        <div class="stat"><b data-count="20" data-suffix=" лет">0</b><span>горизонт, на котором математика работает в вашу пользу</span></div>
+        <div class="stat"><b data-count="3" data-suffix="">0</b><span>класса активов в ядре: акции, облигации, золото</span></div>
+        <div class="stat"><b data-count="0.15" data-dec="2" data-suffix="%">0</b><span>разумная комиссия фонда вместо 1,5%</span></div>
+      </div>
+      <p class="small muted" style="margin-top:14px">
+        «Реально работают» = подтверждено десятилетиями данных, воспроизводимо, не требует прогнозов
+        и доступно частному инвестору с ежемесячным взносом.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ПРАВИЛА ================= -->
+<section class="section" id="rules">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="sec-label">База</div>
+      <h2>10 правил, которые реально работают</h2>
+      <p>Это фундамент. Если правило кажется очевидным — значит, вы уже понимаете, почему 90% инвесторов теряют
+        деньги именно на нарушении этих десяти пунктов, а не на плохих активах.</p>
+    </div>
+    <div class="grid cols-3" id="rulesGrid"></div>
+  </div>
+</section>
+
+<!-- ================= ЭТАПЫ ================= -->
+<section class="section" id="plan">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="sec-label">Дорожная карта</div>
+      <h2>Пять этапов: что делать и что покупать на каждом</h2>
+      <p>Капитал строится в определённой последовательности. Прыгать сразу в акции, не имея резерва и не закрыв
+        долги, — самый частый способ не дожить до результата. Раскройте каждый этап и отметьте свои цели.</p>
+    </div>
+    <div class="roadmap" id="roadmap"></div>
+  </div>
+</section>
+
+<!-- ================= ЧТО ПОКУПАТЬ ================= -->
+<section class="section" id="what">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="sec-label">Состав портфеля</div>
+      <h2>Что покупать: модельные портфели</h2>
+      <p>Четыре рабочие модели под разные этапы. Доли — это не догма, а ориентир: важна сама идея ядра
+        (дешёвые индексные фонды + облигации + золото) и то, что вы её держите годами.</p>
+    </div>
+
+    <div class="tabs" id="portfolioTabs" role="tablist"></div>
+
+    <div class="calc-shell split2" style="margin-bottom:26px">
+      <div id="portfolioMeta"></div>
+      <div>
+        <div id="portfolioChart"></div>
+      </div>
+    </div>
+
+    <div class="table-wrap" id="portfolioBody" style="margin-bottom:26px"></div>
+
+    <h3 style="margin-top:34px">Сравнение моделей по классам активов</h3>
+    <div class="table-wrap" id="compareTable"></div>
+
+    <div class="grid cols-3" style="margin-top:26px">
+      <article class="card reveal">
+        <h3>Ядро и спутник</h3>
+        <p>90% капитала — ядро: индексные фонды и облигации, которые вы не трогаете. 10% — спутник:
+          отдельные идеи, если очень хочется. Спутник не должен влиять на результат портфеля: его задача —
+          защитить ядро от вашей тяги к экспериментам.</p>
+      </article>
+      <article class="card reveal">
+        <h3>Что не покупать</h3>
+        <p>Структурные продукты с гарантией, «инвестиции под 3% в месяц», плечи и фьючерсы на раннем этапе,
+          фонды с комиссией выше 1%, активы, которые нельзя объяснить одним предложением.
+          Если доходность обещана заранее и она высокая — вы платите за неё риском, который от вас скрыли.</p>
+      </article>
+      <article class="card reveal">
+        <h3>Про комиссии и налоги</h3>
+        <p>Проверьте TER фонда, спред, комиссию брокера и налоговый режим. Льгота за 3 года владения,
+          ИИС, вычеты — это дополнительные 1–2 п.п. доходности в год, а на горизонте 20 лет такие
+          доли процента решают больше, чем удачный выбор акций.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= КАК ПОКУПАТЬ ================= -->
+<section class="section" id="how">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="sec-label">Механика покупок</div>
+      <h2>Как покупать: лесенка, усреднение, добавления</h2>
+      <p>Доходность определяется не точкой входа, а процессом. Вот шесть механик: три базовые (работают всегда)
+        и три вспомогательные. Ни одна из них не требует прогноза рынка.</p>
+    </div>
+    <div class="grid cols-3" id="methodsGrid"></div>
+
+    <!-- Интерактивная лесенка -->
+    <div class="card" style="margin-top:30px">
+      <h3>Конструктор лесенки облигаций</h3>
+      <p class="muted">Лесенка превращает волатильный рынок в предсказуемый денежный поток: каждый год
+        гасится одна ступень, и деньги реинвестируются под текущую ставку. Настройте под себя —
+        таблица покажет, сколько капитала вернётся в каком году.</p>
+
+      <div class="calc-shell" style="margin-top:16px">
+        <div class="calc-controls">
+          <div class="field">
+            <label for="lAmount">Сумма на лесенку, ₽</label>
+            <input type="number" id="lAmount" value="3000000" step="100000" min="0">
+          </div>
+          <div class="field">
+            <label for="lYears">Число ступеней (лет) <b id="lYearsV"></b></label>
+            <input type="range" id="lYearsR" min="2" max="15" step="1" value="5">
+            <input type="number" id="lYears" value="5" min="1" max="20" step="1">
+          </div>
+          <div class="field">
+            <label for="lCoupon">Доходность облигаций, % годовых</label>
+            <input type="number" id="lCoupon" value="15" step="0.5" min="0">
+          </div>
+          <div class="field">
+            <label for="lReinvest">Ставка реинвестирования, %</label>
+            <input type="number" id="lReinvest" value="12" step="0.5" min="0">
+          </div>
+          <div class="out-grid" style="grid-template-columns:1fr 1fr;margin:0">
+            <div class="out"><span>Ступень</span><b id="lOutPar">—</b></div>
+            <div class="out"><span>Средний срок</span><b id="lOutAvgTerm">—</b></div>
+            <div class="out accent"><span>Купонов в год</span><b id="lOutCoupon">—</b></div>
+            <div class="out accent"><span>Купоны за цикл</span><b id="lOutTotalCoupon">—</b></div>
+          </div>
+        </div>
+        <div>
+          <div id="lChart"></div>
+          <p class="explain" id="lNote"></p>
+        </div>
+      </div>
+
+      <div class="table-wrap" style="margin-top:20px">
+        <table class="table compact">
+          <thead><tr>
+            <th>Ступень</th><th>Год погашения</th><th class="num">Сумма ступени</th>
+            <th class="num">Купон в год</th><th class="num">Купон за весь срок</th>
+          </tr></thead>
+          <tbody id="lTable"></tbody>
+        </table>
+      </div>
+      <p class="hint">Зелёные столбцы на графике — денежный поток по годам (купон + возврат тела),
+        жёлтый — последний год цикла. Так выглядит «лесенка»: вы всегда знаете, сколько денег вернётся и когда.</p>
+    </div>
+
+    <!-- Просадки -->
+    <h3 style="margin-top:38px">Что делать в просадке: заранее принятые решения</h3>
+    <p class="muted" style="max-width:78ch">Это самая важная таблица на сайте. Распечатайте её и повесьте
+      рядом с монитором. Решения принимаются не в момент паники, а сейчас.</p>
+    <div class="table-wrap" id="drawdownTable" style="margin-top:16px"></div>
+  </div>
+</section>
+
+<!-- ================= КОГДА ПОКУПАТЬ ================= -->
+<section class="section" id="when">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="sec-label">Тайминг без прогнозов</div>
+      <h2>Когда покупать: шесть индикаторов вместо предсказаний</h2>
+      <p>«Когда покупать» — неправильный вопрос, если он означает «поймать дно». Правильный: какие условия
+        говорят, что пора действовать, и какие — что пора подождать с риском. Ниже — светофор, который
+        можно проверять раз в квартал.</p>
+    </div>
+    <div class="table-wrap" id="signalTable"></div>
+
+    <div class="grid cols-3" style="margin-top:26px">
+      <article class="card reveal">
+        <h3>Главное правило тайминга</h3>
+        <p>Время в рынке побеждает тайминг рынка. Пропуск 10 лучших дней за 20 лет примерно вдвое
+          уменьшает итог, а лучшие дни чаще всего следуют сразу за худшими. Поэтому регулярный взнос
+          по расписанию — не «глупость», а способ не оказаться вне рынка в нужный момент.</p>
+      </article>
+      <article class="card reveal">
+        <h3>Когда точно НЕ покупать</h3>
+        <p>Когда нет резерва; когда на покупку взяты кредитные деньги; когда актив не можете объяснить
+          одним предложением; когда решение принято за один вечер под влиянием чужих результатов;
+          когда вы собираетесь продать это через полгода.</p>
+      </article>
+      <article class="card reveal">
+        <h3>Пересборка портфеля</h3>
+        <p>Раз в год, в один и тот же день: сверьте доли с целевыми, направьте новые взносы в отстающие
+          активы, проверьте комиссии и налоговые льготы. Если доля ушла от цели больше чем на 5 п.п. —
+          ребалансируйте вне графика.</p>
+      </article>
+    </div>
+
+    <h3 style="margin-top:38px">Чек-лист перед каждой покупкой</h3>
+    <p class="muted">Отмечайте пункты — браузер запомнит прогресс. Пока не отмечены все — покупать рано.</p>
+    <div class="progress-line"><span>Готовность к системным покупкам</span><b id="checkProgressCount">0 / 12</b></div>
+    <div class="progress-bar" id="checkProgress"></div>
+    <div class="checklist" id="checklist"></div>
+  </div>
+</section>
+
+<!-- ================= КАЛЬКУЛЯТОРЫ ================= -->
+<section class="section" id="calc">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="sec-label">Интерактив</div>
+      <h2>Калькуляторы: посчитайте свои цифры</h2>
+      <p>Четыре инструмента. Начните с первого: он отвечает на вопрос «сколько у меня будет».
+        Второй — «сколько нужно, чтобы получать столько-то». Третий показывает разброс сценариев,
+        четвёртый — сколько у вас забирают комиссии.</p>
+    </div>
+
+    <div class="tabs">
+      <button class="calc-tab active" data-calc="capital">1. Капитал за N лет</button>
+      <button class="calc-tab" data-calc="income">2. Целевой доход</button>
+      <button class="calc-tab" data-calc="monte">3. Сценарии (Монте-Карло)</button>
+      <button class="calc-tab" data-calc="fees">4. Издержки</button>
+    </div>
+
+    <div class="calc-shell">
+      <!-- 1. КАПИТАЛ -->
+      <div class="calc-panel active" id="tab-capital">
+        <div class="calc-controls">
+          <div class="field"><label for="cStart">Стартовый капитал, ₽</label><input type="number" id="cStart" value="100000" step="10000" min="0"></div>
+          <div class="field"><label for="cMonthly">Взнос в месяц, ₽</label><input type="number" id="cMonthly" value="30000" step="1000" min="0"></div>
+          <div class="field"><label for="cIndex">Рост взноса в год, %</label><input type="number" id="cIndex" value="6" step="1" min="0" max="30"></div>
+          <div class="field">
+            <label for="cYears">Срок, лет <b id="cYearsV"></b></label>
+            <input type="range" id="cYearsR" min="1" max="40" step="1" value="18">
+            <input type="number" id="cYears" value="18" min="1" max="50" step="1">
+          </div>
+          <div class="field">
+            <label for="cRet">Доходность портфеля, % годовых <b id="cRetV"></b></label>
+            <input type="range" id="cRetR" min="0" max="20" step="0.5" value="8">
+            <input type="number" id="cRet" value="8" step="0.5" min="-10" max="40">
+          </div>
+          <div class="field"><label for="cInfl">Инфляция, % годовых</label><input type="number" id="cInfl" value="6" step="0.5" min="0"></div>
+          <div class="field"><label for="cFee">Комиссия фонда (TER), %</label><input type="number" id="cFee" value="0.5" step="0.05" min="0"></div>
+        </div>
+        <div>
+          <div class="out-grid">
+            <div class="out accent"><span>Капитал через N лет</span><b id="cOutNom">—</b></div>
+            <div class="out"><span>В сегодняшних деньгах</span><b id="cOutReal">—</b></div>
+            <div class="out"><span>Вы внесёте всего</span><b id="cOutContrib">—</b></div>
+            <div class="out"><span>Заработает рынок</span><b id="cOutGain">—</b></div>
+            <div class="out"><span>Множитель</span><b id="cOutMult">—</b></div>
+          </div>
+          <div id="cChart"></div>
+          <p class="explain" id="cGainExplain"></p>
+          <div class="table-wrap" style="margin-top:18px;max-height:340px;overflow:auto">
+            <table class="table compact">
+              <thead><tr>
+                <th>Год</th><th class="num">Взнос/мес</th><th class="num">Внесено всего</th>
+                <th class="num">Капитал</th><th class="num">В сегодняшних деньгах</th><th class="num">Доход</th>
+              </tr></thead>
+              <tbody id="cTable"></tbody>
+            </table>
+          </div>
+          <p class="hint">Доходность указана до инфляции и после комиссии фонда. Налоги не учтены —
+            смотрите вкладку «Издержки» и раздел про налоговые льготы.</p>
+        </div>
+      </div>
+
+      <!-- 2. ДОХОД -->
+      <div class="calc-panel" id="tab-income">
+        <div class="calc-controls">
+          <div class="field"><label for="iTarget">Желаемый доход в месяц, ₽ (в сегодняшних деньгах)</label><input type="number" id="iTarget" value="150000" step="10000" min="0"></div>
+          <div class="field">
+            <label for="iYears">Лет до выхода на доход <b id="iYearsV"></b></label>
+            <input type="range" id="iYearsR" min="1" max="40" step="1" value="18">
+            <input type="number" id="iYears" value="18" min="1" max="50" step="1">
+          </div>
+          <div class="field">
+            <label for="iWithdraw">Ставка изъятия, % в год <b id="iWithdrawV"></b></label>
+            <input type="range" id="iWithdrawR" min="2.5" max="8" step="0.1" value="4">
+            <input type="number" id="iWithdraw" value="4" step="0.1" min="1" max="15">
+          </div>
+          <div class="field"><label for="iInfl">Инфляция, %</label><input type="number" id="iInfl" value="6" step="0.5" min="0"></div>
+          <div class="field"><label for="iTax">Налог на доход, %</label><input type="number" id="iTax" value="13" step="1" min="0" max="45"></div>
+          <div class="field"><label for="iRet">Доходность портфеля до выхода, %</label><input type="number" id="iRet" value="8" step="0.5" min="0"></div>
+          <div class="field"><label for="iFee">Комиссия, %</label><input type="number" id="iFee" value="0.5" step="0.05" min="0"></div>
+          <div class="field"><label for="iIndex">Индексация взноса, % в год</label><input type="number" id="iIndex" value="6" step="1" min="0"></div>
+          <div class="field"><label for="iStart">Текущий капитал, ₽</label><input type="number" id="iStart" value="100000" step="10000" min="0"></div>
+          <div class="field"><label for="iMonthly">Текущий взнос в месяц, ₽</label><input type="number" id="iMonthly" value="30000" step="1000" min="0"></div>
+        </div>
+        <div>
+          <div class="out-grid">
+            <div class="out accent"><span>Нужный капитал</span><b id="iOutCapital">—</b></div>
+            <div class="out"><span>В сегодняшних деньгах</span><b id="iOutToday">—</b></div>
+            <div class="out"><span>Годовой доход до налога</span><b id="iOutAnnual">—</b></div>
+            <div class="out"><span>Множитель расходов</span><b id="iOutMultiple">—</b></div>
+            <div class="out"><span>Нужный взнос в месяц</span><b id="iOutNeed">—</b></div>
+          </div>
+          <div id="iChart"></div>
+          <p class="explain" id="iOutVerdict"></p>
+          <p class="hint">Ставка изъятия 4% — классика (исследование Trinity). Для горизонта 30+ лет и большей
+            надёжности используйте 3,5%: это увеличивает нужный капитал с 25 до 28,6 годовых расходов,
+            но заметно снижает риск остаться без денег.</p>
+        </div>
+      </div>
+
+      <!-- 3. МОНТЕ-КАРЛО -->
+      <div class="calc-panel" id="tab-monte">
+        <div class="calc-controls">
+          <div class="field"><label for="mStart">Стартовый капитал, ₽</label><input type="number" id="mStart" value="100000" step="10000" min="0"></div>
+          <div class="field"><label for="mMonthly">Взнос в месяц, ₽</label><input type="number" id="mMonthly" value="30000" step="1000" min="0"></div>
+          <div class="field">
+            <label for="mYears">Срок, лет <b id="mYearsV"></b></label>
+            <input type="range" id="mYearsR" min="1" max="40" step="1" value="18">
+            <input type="number" id="mYears" value="18" min="1" max="50" step="1">
+          </div>
+          <div class="field"><label for="mRet">Средняя доходность, %</label><input type="number" id="mRet" value="8" step="0.5" min="-5"></div>
+          <div class="field">
+            <label for="mVol">Волатильность, % <b id="mVolV"></b></label>
+            <input type="range" id="mVolR" min="5" max="40" step="1" value="15">
+            <input type="number" id="mVol" value="15" step="1" min="1" max="60">
+          </div>
+          <div class="field"><label for="mRuns">Число симуляций</label><input type="number" id="mRuns" value="3000" step="500" min="200" max="20000"></div>
+          <div class="field">
+            <label for="mMode">Режим входа</label>
+            <select id="mMode">
+              <option value="dca">Усреднение (взносы каждый месяц)</option>
+              <option value="lump">Всё сразу (единовременно)</option>
+            </select>
+          </div>
+          <button class="btn primary" id="mRun">Пересчитать сценарии</button>
+        </div>
+        <div>
+          <div class="out-grid">
+            <div class="out"><span>Плохой сценарий (10%)</span><b id="mP10" class="neg">—</b></div>
+            <div class="out accent"><span>Медиана</span><b id="mP50">—</b></div>
+            <div class="out"><span>Хороший сценарий (90%)</span><b id="mP90" class="pos">—</b></div>
+            <div class="out"><span>Внесено всего</span><b id="mContrib">—</b></div>
+            <div class="out"><span>Вероятность убытка</span><b id="mProbLoss">—</b></div>
+          </div>
+          <div id="mChart"></div>
+          <p class="explain" id="mNote"></p>
+          <p class="hint">Волатильность 15% — типичная для портфеля 60/40, 18–20% — для портфеля из 80–100% акций.
+            Модель не учитывает налоги и комиссии, зато показывает главное: разброс результатов огромен,
+            и планировать надо по плохому сценарию, а не по среднему.</p>
+        </div>
+      </div>
+
+      <!-- 4. ИЗДЕРЖКИ -->
+      <div class="calc-panel" id="tab-fees">
+        <div class="calc-controls">
+          <div class="field"><label for="fStart">Стартовый капитал, ₽</label><input type="number" id="fStart" value="100000" step="10000" min="0"></div>
+          <div class="field"><label for="fMonthly">Взнос в месяц, ₽</label><input type="number" id="fMonthly" value="30000" step="1000" min="0"></div>
+          <div class="field">
+            <label for="fYears">Срок, лет <b id="fYearsV"></b></label>
+            <input type="range" id="fYearsR" min="1" max="40" step="1" value="18">
+            <input type="number" id="fYears" value="18" min="1" max="50" step="1">
+          </div>
+          <div class="field"><label for="fRet">Доходность рынка, %</label><input type="number" id="fRet" value="8" step="0.5"></div>
+          <div class="field"><label for="fFee1">Комиссия варианта А, %</label><input type="number" id="fFee1" value="0.15" step="0.05" min="0"></div>
+          <div class="field"><label for="fFee2">Комиссия варианта Б, %</label><input type="number" id="fFee2" value="1.5" step="0.05" min="0"></div>
+        </div>
+        <div>
+          <div class="out-grid">
+            <div class="out accent"><span>Итог с низкой комиссией</span><b id="fOutA">—</b></div>
+            <div class="out"><span>Итог с высокой комиссией</span><b id="fOutB">—</b></div>
+            <div class="out"><span>Разница в деньгах</span><b id="fDiff" class="neg">—</b></div>
+            <div class="out"><span>Потеря от комиссии</span><b id="fDiffPct" class="neg">—</b></div>
+          </div>
+          <div id="fChart"></div>
+          <p class="explain">Комиссия — единственный параметр, который вы контролируете полностью.
+            Разница в 1,35 п.п. в год отнимает при регулярных взносах около 13% капитала за 18 лет
+            и больше 22% за 30 лет. Проверьте цифры сами, изменив комиссии ниже.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= МОЙ ПОРТФЕЛЬ ================= -->
+<section class="section" id="portfolio-mine">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="sec-label">Личный инструмент</div>
+      <h2>Мой портфель и план покупок</h2>
+      <p>Внесите позиции: тикер, количество, цену покупки и целевую долю. Если тикер есть в списке цен
+        (BTC, ETH, SPY, QQQ, VOO, XAU) — текущая цена подтянется автоматически, остальное вводите вручную
+        из терминала. Сайт посчитает доли, отклонения и покажет, что докупить на новый взнос.</p>
+    </div>
+
+    <div class="pf-toolbar">
+      <select id="pfModel" aria-label="Загрузить модельный портфель"></select>
+      <button class="btn small" id="pfAdd">+ Добавить актив</button>
+      <button class="btn small ghost" id="pfExport">Экспорт JSON</button>
+      <button class="btn small ghost" id="pfImportBtn">Импорт JSON</button>
+      <button class="btn small ghost" id="pfClear">Очистить</button>
+      <input type="file" id="pfImportFile" accept=".json,application/json" hidden>
+    </div>
+    <p class="hint" id="pfTargetWarn"></p>
+
+    <div class="table-wrap">
+      <table class="table pf-table">
+        <thead>
+          <tr>
+            <th style="min-width:150px">Актив</th>
+            <th style="min-width:90px">Тикер</th>
+            <th class="num">Кол-во</th>
+            <th class="num">Цена покупки</th>
+            <th class="num">Текущая цена</th>
+            <th class="num">Стоимость</th>
+            <th class="num">Цель, %</th>
+            <th class="num">P&amp;L</th>
+            <th>Действие</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="pfBody"></tbody>
+      </table>
+    </div>
+
+    <div class="grid cols-2" style="margin-top:22px">
+      <div>
+        <div class="out-grid" style="grid-template-columns:1fr 1fr">
+          <div class="out accent"><span>Стоимость портфеля</span><b id="pfTotal">—</b></div>
+          <div class="out"><span>Вложено</span><b id="pfCost">—</b></div>
+          <div class="out"><span>Прибыль / убыток</span><b id="pfPnl">—</b></div>
+          <div class="out"><span>Доходность</span><b id="pfPnlPct">—</b></div>
+        </div>
+        <div id="pfDonut"></div>
+      </div>
+      <div>
+        <div class="card">
+          <h3>План покупок на взнос</h3>
+          <p class="muted small">Введите сумму, которую готовы внести сейчас, и получите распределение
+            по отстающим от цели активам — без продаж и без налогов.</p>
+          <div class="field" style="margin:14px 0">
+            <label for="pfContribution">Сумма взноса, ₽</label>
+            <input type="number" id="pfContribution" value="50000" step="5000" min="0">
+          </div>
+          <button class="btn primary" id="pfPlanBtn">Распределить взнос</button>
+          <div id="pfPlan" style="margin-top:18px"></div>
+        </div>
+      </div>
+    </div>
+    <p class="hint">Данные хранятся только в вашем браузере (localStorage). Резервную копию всего сайта
+      можно сделать кнопкой «Экспорт всех данных» в футере.</p>
+  </div>
+</section>
+
+<!-- ================= РЫНОК ================= -->
+<section class="section" id="market">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="sec-label">Актуальные данные</div>
+      <h2>Цены на активы-ориентиры</h2>
+      <p>Курсы валют — с сайта ЦБ РФ, крипта и золото — из CoinGecko. Акции и ETF — через бесплатный ключ
+        Twelve Data (можно вставить свой ниже) либо вручную. Если интернета нет, показываются последние
+        сохранённые значения, а любое поле можно переписать руками.</p>
+    </div>
+
+    <div class="pf-toolbar">
+      <button class="btn small primary" id="marketRefresh">Обновить цены</button>
+      <span class="market-status" id="marketStatus"></span>
+    </div>
+
+    <div class="table-wrap" style="margin-top:16px">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Актив</th><th>Тикер</th><th class="num">Цена</th><th class="num">Изм. за сутки</th>
+            <th class="num">В рублях</th><th>Источник</th><th class="num">Своя цена</th>
+          </tr>
+        </thead>
+        <tbody id="marketBody"></tbody>
+      </table>
+    </div>
+
+    <div class="grid cols-2" style="margin-top:20px">
+      <div class="card">
+        <h3>Ключ Twelve Data (для акций и ETF)</h3>
+        <p class="muted small">Бесплатный тариф: 800 запросов в сутки. Зарегистрируйтесь на twelvedata.com,
+          скопируйте API-ключ и вставьте сюда. Ключ сохраняется только в вашем браузере.</p>
+        <div class="field" style="margin:14px 0">
+          <label for="tdKey">API-ключ</label>
+          <input type="text" id="tdKey" placeholder="например, a1b2c3d4e5f6...">
+        </div>
+        <button class="btn small" id="tdKeySave">Сохранить и обновить</button>
+      </div>
+      <div class="card">
+        <h3>Как это использовать</h3>
+        <p class="muted small">Цены нужны не для «поймать момент», а для двух вещей: посчитать фактическую
+          стоимость портфеля и распределить новый взнос по отстающим активам. Обновление — раз в 10 минут
+          автоматически, плюс кнопка «Обновить цены». Последнее обновление: <b id="marketUpdated">—</b>.</p>
+        <p class="muted small">Опорные ориентиры: доходность длинных ОФЗ, индекс МосБиржи, S&amp;P 500, золото
+          в рублях. Их динамика — это и есть тот «светофор» из раздела «Когда покупать».</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ТЕСТ ================= -->
+<section class="section" id="quiz">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="sec-label">Самопроверка</div>
+      <h2>Какой портфель вы действительно выдержите</h2>
+      <p>Ваш риск-профиль определяется не желанием заработать, а способностью не продать в худший момент.
+        Шесть вопросов — и вы получите модель, которую сможете держать 15–20 лет.</p>
+    </div>
+    <div class="card" id="quizBox"></div>
+  </div>
+</section>
+
+<!-- ================= ЛИТЕРАТУРА ================= -->
+<section class="section" id="books">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="sec-label">Первоисточники</div>
+      <h2>Что почитать, чтобы не верить на слово</h2>
+      <p>Все принципы выше — не мнение, а пересказ исследований и книг, которые проверены временем.
+        Если хотите копнуть глубже — начните с первых трёх.</p>
+    </div>
+    <div class="grid cols-4" id="booksGrid"></div>
+
+    <div class="disclaimer" style="margin-top:30px">
+      <b>Важно.</b> Этот сайт — образовательная памятка, а не инвестиционная рекомендация и не индивидуальная
+      консультация. Все расчёты основаны на введённых вами допущениях: реальная доходность будет другой,
+      прошлые результаты не гарантируют будущих. Указанные тикеры и инструменты приведены как примеры классов
+      активов — проверяйте актуальные условия, комиссии и налоговый статус самостоятельно.
+      Решения принимайте с учётом своей ситуации, при сомнениях — с лицензированным советником.
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ================= ФУТЕР ================= -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-top">
+      <div>
+        <b style="color:var(--text)">Инвестиционная памятка</b>
+        <div class="small">Система накопления капитала на 15–20 лет. Данные хранятся локально в браузере.</div>
+      </div>
+      <div class="toolbar">
+        <button class="btn small" id="btnPrint">Печать / PDF</button>
+        <button class="btn small ghost" id="btnExportAll">Экспорт всех данных</button>
+        <button class="btn small ghost" id="btnImportAll">Импорт данных</button>
+        <button class="btn small ghost" id="btnReset">Сбросить всё</button>
+        <input type="file" id="fileImportAll" accept=".json,application/json" hidden>
+      </div>
+    </div>
+    <div class="footer-grid">
+      <div>
+        <h4>Оглавление</h4>
+        <a href="#rules">10 правил</a>
+        <a href="#plan">Этапы накопления</a>
+        <a href="#what">Что покупать</a>
+        <a href="#how">Как покупать (лесенка)</a>
+        <a href="#when">Когда покупать</a>
+      </div>
+      <div>
+        <h4>Инструменты</h4>
+        <a href="#calc">Калькулятор капитала</a>
+        <a href="#calc">Расчёт целевого дохода</a>
+        <a href="#portfolio-mine">Мой портфель</a>
+        <a href="#market">Актуальные цены</a>
+        <a href="#quiz">Тест риск-профиля</a>
+      </div>
+      <div>
+        <h4>Данные и источники</h4>
+        <span class="small">Курсы валют — ЦБ РФ (cbr-xml-daily.ru)</span>
+        <span class="small">Крипта и золото — CoinGecko</span>
+        <span class="small">Акции и ETF — Twelve Data (свой ключ)</span>
+        <span class="small">Исследования — Trinity Study, SPIVA</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<button id="toTop" aria-label="Наверх">↑</button>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/util.js"></script>
+<script src="assets/js/charts.js"></script>
+<script src="assets/js/calc.js"></script>
+<script src="assets/js/prices.js"></script>
+<script src="assets/js/portfolio.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
