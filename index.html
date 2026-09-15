@@ -169,7 +169,7 @@
     <div class="grid cols-3" id="methodsGrid"></div>
 
     <!-- Интерактивная лесенка -->
-    <div class="card" style="margin-top:30px">
+    <div class="card" style="margin-top:30px" id="ladderBox">
       <h3>Конструктор лесенки облигаций</h3>
       <p class="muted">Лесенка превращает волатильный рынок в предсказуемый денежный поток: каждый год
         гасится одна ступень, и деньги реинвестируются под текущую ставку. Настройте под себя —
@@ -517,34 +517,37 @@
   <div class="wrap">
     <div class="section-head">
       <div class="sec-label">Актуальные данные</div>
-      <h2>Цены на активы-ориентиры</h2>
-      <p>Курсы валют — с сайта ЦБ РФ, крипта и золото — из CoinGecko. Акции и ETF — через бесплатный ключ
-        Twelve Data (можно вставить свой ниже) либо вручную. Если интернета нет, показываются последние
-        сохранённые значения, а любое поле можно переписать руками.</p>
+      <h2>Акции, облигации, фонды и индексы</h2>
+      <p>Живые котировки Московской биржи: индексы МосБиржи и RGBI, акции, БПИФ/ETF, ОФЗ с купоном,
+        доходностью к погашению и дюрацией. Курсы валют — официальные курсы ЦБ РФ. Мировые фонды
+        (SPY, QQQ, VOO) подключаются бесплатным ключом Twelve Data. Всё обновляется автоматически
+        и работает без интернета на последних сохранённых данных.</p>
     </div>
 
     <div class="pf-toolbar">
-      <button class="btn small primary" id="marketRefresh">Обновить цены</button>
+      <button class="btn small primary" id="marketRefresh">Обновить данные</button>
       <span class="market-status" id="marketStatus"></span>
     </div>
 
-    <div class="table-wrap" style="margin-top:16px">
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Актив</th><th>Тикер</th><th class="num">Цена</th><th class="num">Изм. за сутки</th>
-            <th class="num">В рублях</th><th>Источник</th><th class="num">Своя цена</th>
-          </tr>
-        </thead>
-        <tbody id="marketBody"></tbody>
-      </table>
-    </div>
+    <div id="marketGroups" style="margin-top:16px"></div>
 
-    <div class="grid cols-2" style="margin-top:20px">
+    <div class="grid cols-3" style="margin-top:20px">
       <div class="card">
-        <h3>Ключ Twelve Data (для акций и ETF)</h3>
-        <p class="muted small">Бесплатный тариф: 800 запросов в сутки. Зарегистрируйтесь на twelvedata.com,
-          скопируйте API-ключ и вставьте сюда. Ключ сохраняется только в вашем браузере.</p>
+        <h3>Свои тикеры МосБиржи</h3>
+        <p class="muted small">Впишите тикеры через запятую — акции (<code>SBER</code>), фонды
+          (<code>TMOS</code>), облигации (<code>SU26238RMFS4</code>). Сайт сам определит тип бумаги
+          и покажет цену, а для облигаций — купон, доходность и дату погашения.</p>
+        <div class="field" style="margin:14px 0">
+          <label for="customTickers">Тикеры</label>
+          <input type="text" id="customTickers" placeholder="например: SNGSP, MTSS, SU26238RMFS4">
+        </div>
+        <button class="btn small" id="customSave">Сохранить список</button>
+      </div>
+      <div class="card">
+        <h3>Мировые фонды: ключ Twelve Data</h3>
+        <p class="muted small">Бесплатный тариф — 800 запросов в сутки. Зарегистрируйтесь на
+          twelvedata.com, скопируйте API-ключ и вставьте сюда: появятся цены SPY, QQQ, VOO.
+          Ключ хранится только в вашем браузере.</p>
         <div class="field" style="margin:14px 0">
           <label for="tdKey">API-ключ</label>
           <input type="text" id="tdKey" placeholder="например, a1b2c3d4e5f6...">
@@ -554,10 +557,11 @@
       <div class="card">
         <h3>Как это использовать</h3>
         <p class="muted small">Цены нужны не для «поймать момент», а для двух вещей: посчитать фактическую
-          стоимость портфеля и распределить новый взнос по отстающим активам. Обновление — раз в 10 минут
-          автоматически, плюс кнопка «Обновить цены». Последнее обновление: <b id="marketUpdated">—</b>.</p>
-        <p class="muted small">Опорные ориентиры: доходность длинных ОФЗ, индекс МосБиржи, S&amp;P 500, золото
-          в рублях. Их динамика — это и есть тот «светофор» из раздела «Когда покупать».</p>
+          стоимость портфеля и распределить новый взнос по отстающим активам. Кнопка «в лесенку»
+          у облигации подставляет её доходность и дюрацию в конструктор лесенки выше.</p>
+        <p class="muted small">Ориентиры из раздела «Когда покупать» — это как раз доходность ОФЗ
+          (в таблице облигаций) и динамика индекса МосБиржи. Последнее обновление:
+          <b id="marketUpdated">—</b>.</p>
       </div>
     </div>
   </div>
@@ -634,9 +638,9 @@
       </div>
       <div>
         <h4>Данные и источники</h4>
+        <span class="small">Акции, фонды, облигации, индексы — Московская биржа (ISS API)</span>
         <span class="small">Курсы валют — ЦБ РФ (cbr-xml-daily.ru)</span>
-        <span class="small">Крипта и золото — CoinGecko</span>
-        <span class="small">Акции и ETF — Twelve Data (свой ключ)</span>
+        <span class="small">Мировые фонды — Twelve Data (свой бесплатный ключ)</span>
         <span class="small">Исследования — Trinity Study, SPIVA</span>
       </div>
     </div>

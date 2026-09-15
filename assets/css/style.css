@@ -437,6 +437,11 @@ input[type="range"]::-moz-range-thumb {
 .market-status.ok { color: var(--green-2); }
 .market-status.warn { color: var(--warn); }
 .market-status.loading { color: var(--blue); }
+.market-group-title {
+  font-size: 17px; margin: 26px 0 12px; padding-left: 13px;
+  border-left: 3px solid var(--green); letter-spacing: -0.01em;
+}
+.market-group-title:first-child { margin-top: 4px; }
 input.manual-price {
   background: rgba(0, 0, 0, 0.3); border: 1px solid var(--line-soft); color: var(--text);
   border-radius: 8px; padding: 6px 9px; font-family: var(--mono); font-size: 13px; width: 118px;
