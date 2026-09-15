@@ -196,7 +196,8 @@
     const a = growth({ start: o.start, monthly: o.monthly, years: o.years, ret: o.ret, fee: o.fee1, inflation: 0, index: 0 });
     const b = growth({ start: o.start, monthly: o.monthly, years: o.years, ret: o.ret, fee: o.fee2, inflation: 0, index: 0 });
     const diff = a.nominal - b.nominal;
-    return { a: a.nominal, b: b.nominal, diff, diffPct: b.nominal ? diff / b.nominal * 100 : 0 };
+    /* доля потерь считается от того капитала, который был бы без высокой комиссии */
+    return { a: a.nominal, b: b.nominal, diff, diffPct: a.nominal ? diff / a.nominal * 100 : 0 };
   }
 
   /* =================  ОТРИСОВКА  ================= */

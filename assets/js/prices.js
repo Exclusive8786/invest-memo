@@ -1,18 +1,24 @@
 /* ============================================================
-   prices.js — актуальные цены: акции, облигации, фонды, индексы
-   Основной источник: Московская биржа (ISS API, без ключа, CORS есть)
-   Курсы валют: ЦБ РФ · Мировые ETF: Twelve Data (свой бесплатный ключ)
+   prices.js — актуальные данные российского рынка
+   Источники: Московская биржа (ISS API, без ключа, CORS есть)
+              и официальные курсы ЦБ РФ.
+   Никаких зарубежных бумаг: всё торгуется на Мосбирже за рубли.
    ============================================================ */
 (function (global) {
   'use strict';
 
-  const { $, $$, on, num, money, pct, esc, get, set } = global.U;
+  const { $, $$, on, num, money, esc, get, set } = global.U;
 
   /* ---------- Что отслеживаем по умолчанию ---------- */
   const WATCH = {
+    /* Индексы: MCFTR и MCXSM считаются на борде RTSI, остальные на SNDX */
     indices: [
-      { secid: 'IMOEX', name: 'Индекс МосБиржи' },
-      { secid: 'RGBI', name: 'Индекс гособлигаций RGBI' }
+      { secid: 'MCFTR', board: 'RTSI', name: 'Индекс МосБиржи полной доходности (с дивидендами)' },
+      { secid: 'IMOEX', board: 'SNDX', name: 'Индекс МосБиржи (ценовой)' },
+      { secid: 'MCXSM', board: 'RTSI', name: 'Индекс средней и малой капитализации (SMID)' },
+      { secid: 'RGBI', board: 'SNDX', name: 'Индекс гособлигаций RGBI' },
+      { secid: 'RGBITR', board: 'SNDX', name: 'Индекс гособлигаций полной доходности' },
+      { secid: 'RUCBITR', board: 'SNDX', name: 'Индекс корпоративных облигаций полной доходности' }
     ],
     shares: [
       { secid: 'SBER', name: 'Сбербанк' },
@@ -21,46 +27,54 @@
       { secid: 'GMKN', name: 'Норникель' }
     ],
     funds: [
-      { secid: 'TMOS', name: 'Индекс МосБиржи (БПИФ)' },
-      { secid: 'SBMX', name: 'Индекс МосБиржи (БПИФ, Сбер)' },
-      { secid: 'GOLD', name: 'Золото (фонд)' },
-      { secid: 'LQDT', name: 'Денежный рынок / ликвидность' }
+      { secid: 'TMOS', name: 'Индекс МосБиржи (Т-Капитал)' },
+      { secid: 'EQMX', name: 'Индекс МосБиржи (ВИМ)' },
+      { secid: 'SBMX', name: 'Топ российских акций (Первая)' },
+      { secid: 'GOLD', name: 'Золото (ВИМ)' },
+      { secid: 'SBCB', name: 'Валютные облигации (Первая)' },
+      { secid: 'SBFR', name: 'Облигации-флоатеры (Первая)' },
+      { secid: 'LQDT', name: 'Денежный рынок (ВИМ)' },
+      { secid: 'AKMM', name: 'Денежный рынок (Альфа)' },
+      { secid: 'CNYM', name: 'Ликвидность. Юань (ВИМ)' }
     ],
+    /* ОФЗ на борде TQOB */
     bonds: [
-      { secid: 'SU26232RMFS7', name: 'ОФЗ 26232 (погашение 2027)' },
-      { secid: 'SU26242RMFS6', name: 'ОФЗ 26242 (погашение 2029)' },
-      { secid: 'SU26246RMFS7', name: 'ОФЗ 26246 (погашение 2036)' },
-      { secid: 'SU26238RMFS4', name: 'ОФЗ 26238 (погашение 2041)' }
+      { secid: 'SU26236RMFS8', board: 'TQOB', name: 'ОФЗ 26236' },
+      { secid: 'SU26246RMFS7', board: 'TQOB', name: 'ОФЗ 26246' },
+      { secid: 'SU26238RMFS4', board: 'TQOB', name: 'ОФЗ 26238' },
+      { secid: 'SU29015RMFS3', board: 'TQOB', name: 'ОФЗ 29015 (флоатер)' }
+    ],
+    /* Корпоративные и замещающие на борде TQCB */
+    corp: [
+      { secid: 'RU000A104Z48', board: 'TQCB', group: 'corp', name: 'ВЭБ 2Р-33 (рублёвая)' },
+      { secid: 'RU000A10FV69', board: 'TQCB', group: 'corp', name: 'РЖД 1Р-54R (рублёвая)' },
+      { secid: 'RU000A105A95', board: 'TQCB', group: 'corp', name: 'ГазКЗ-34Д (замещающая)' },
+      { secid: 'RU000A107C67', board: 'TQCB', group: 'corp', name: 'НорНикЗ26Д (замещающая)' }
     ],
     fx: [
       { code: 'USD', name: 'Доллар США' },
       { code: 'EUR', name: 'Евро' },
       { code: 'CNY', name: 'Юань' }
-    ],
-    global: [
-      { ticker: 'SPY', name: 'S&P 500 (SPY)' },
-      { ticker: 'QQQ', name: 'Nasdaq 100 (QQQ)' },
-      { ticker: 'VOO', name: 'S&P 500 (VOO)' }
     ]
   };
 
   const GROUP_TITLES = {
-    indices: 'Индексы',
+    indices: 'Индексы МосБиржи',
     shares: 'Акции',
-    funds: 'Фонды и БПИФ',
-    bonds: 'Облигации (ОФЗ)',
-    fx: 'Курсы валют (ЦБ РФ)',
-    global: 'Мировые фонды (нужен ключ Twelve Data)',
-    custom: 'Мои тикеры'
+    funds: 'Фонды и БПИФ (торгуются как акции)',
+    bonds: 'Облигации федерального займа (ОФЗ)',
+    corp: 'Корпоративные и замещающие облигации',
+    custom: 'Мои тикеры',
+    fx: 'Курсы валют ЦБ РФ'
   };
 
   const CACHE_TTL = 10 * 60 * 1000;
 
   const state = {
-    items: {},        // key -> { group, name, ticker, price, rub, change, cur, extra, src, ts }
+    items: {},
     fx: { USD: null, EUR: null, CNY: null },
-    custom: get('customTickers', []),      // ['SNGSP','SU26238RMFS4', ...]
-    manual: get('manualPrices', {}),       // key -> цена
+    custom: get('customTickers', []),
+    manual: get('manualPrices', {}),
     updated: null,
     errors: [],
     status: ''
@@ -82,7 +96,6 @@
       encodeURIComponent(secids.join(','));
   }
 
-  /** Разбирает ответ ISS: возвращает { SECID: {sec, md} } */
   function parseISS(json) {
     const toObj = blk => {
       const out = {};
@@ -115,18 +128,20 @@
     return fetchJSON(moexUrl(market, board, secids)).then(parseISS);
   }
 
-  /* ---------- Загрузка с MOEX ---------- */
+  /* ---------- Разбор данных ---------- */
   function applyIndex(secid, d, meta) {
     const v = pick(d.md.CURRENTVALUE, d.md.LASTVALUE, d.sec.PREVPRICE);
     if (v == null) return;
     state.items['idx:' + secid] = {
       group: 'indices', name: (meta && meta.name) || d.sec.SHORTNAME || secid,
-      ticker: secid, price: v, rub: v, cur: 'RUB', isIndex: true, dec: pick(d.sec.DECIMALS, 2), src: 'MOEX',
+      ticker: secid, price: v, rub: v, cur: 'RUB', isIndex: true,
+      dec: pick(d.sec.DECIMALS, 2), src: 'MOEX',
       change: pick(d.md.LASTCHANGEPRC, d.md.LASTCHANGEPRCNT),
       extra: {
-        'Изм. за месяц': pick(d.md.MONTHCHANGEPRC),
-        'Изм. с начала года': pick(d.md.YEARCHANGEPRC),
-        'Макс/мин за год': (d.sec.ANNUALHIGH && d.sec.ANNUALLOW) ? num(d.sec.ANNUALLOW, 2) + ' – ' + num(d.sec.ANNUALHIGH, 2) : null
+        'За месяц': pick(d.md.MONTHCHANGEPRC),
+        'С начала года': pick(d.md.YEARCHANGEPRC),
+        'Диапазон за год': (d.sec.ANNUALHIGH && d.sec.ANNUALLOW)
+          ? num(d.sec.ANNUALLOW, 2) + ' – ' + num(d.sec.ANNUALHIGH, 2) : null
       },
       ts: Date.now()
     };
@@ -145,8 +160,7 @@
       extra: {
         'Лот': num(lot, 0) + ' шт',
         'Цена лота': money(v * lot, '₽'),
-        'Оборот за день': d.md.VALTODAY ? global.U.short(d.md.VALTODAY) + ' ₽' : null,
-        'Ближайший дивиденд': null
+        'Оборот за день': d.md.VALTODAY ? global.U.short(d.md.VALTODAY) + ' ₽' : null
       },
       ts: Date.now()
     };
@@ -156,71 +170,103 @@
     const v = pick(d.md.LAST, d.md.LCURRENTPRICE, d.md.MARKETPRICE, d.sec.PREVPRICE);
     if (v == null) return;
     const face = pick(d.sec.FACEVALUE, 1000);
-    const rubPrice = v * face / 100;                 // котировка в % от номинала
+    const faceUnit = String(d.sec.FACEUNIT || 'SUR').toUpperCase();
     const nkd = pick(d.sec.ACCRUEDINT);
     const couponRub = pick(d.sec.COUPONVALUE);
-    const yieldPct = pick(d.md.YIELD, d.sec.YIELDATPREVWAPRICE);
+    const yen = pick(d.md.YIELD, d.sec.YIELDATPREVWAPRICE);
+    const yieldPct = (yen != null && yen > 0) ? yen : null;
     const durDays = pick(d.md.DURATION);
+    const durYears = (durDays != null && durDays > 0) ? durDays / 365 : null;
+    const floater = /ПК|флоат/i.test(String(d.sec.SHORTNAME) + String(d.sec.SECNAME)) || couponRub === 0;
+    const curName = faceUnit === 'USD' ? 'долларах' : (faceUnit === 'EUR' ? 'евро' : null);
     state.items['bd:' + secid] = {
-      group: 'bonds',
+      group: (meta && meta.group) || 'bonds',
       name: (meta && meta.name) || d.sec.SHORTNAME || secid,
-      ticker: secid, price: v, rub: rubPrice, cur: 'RUB', src: 'MOEX',
+      ticker: secid, price: v, cur: 'RUB', src: 'MOEX',
       change: pick(d.md.LASTCHANGEPRCNT, d.md.LASTCHANGEPRC),
-      isBond: true,
+      isBond: true, face: face, faceUnit: faceUnit,
       extra: {
-        'Цена, ₽': money(rubPrice, '₽'),
         'НКД': nkd != null ? money(nkd, '₽') : null,
-        'Купон': couponRub != null ? (money(couponRub, '₽') + (d.sec.COUPONPERIOD ? ' / ' + d.sec.COUPONPERIOD + ' дн.' : '')) : null,
-        'Доходность': yieldPct != null ? num(yieldPct, 2) + '%' : null,
+        'Купон': couponRub != null && couponRub > 0
+          ? (money(couponRub, faceUnit === 'SUR' ? '₽' : '$') + (d.sec.COUPONPERIOD ? ' / ' + d.sec.COUPONPERIOD + ' дн.' : ''))
+          : (floater ? 'переменный (флоатер)' : null),
+        'Доходность': yieldPct != null ? num(yieldPct, 2) + '%' + (curName ? ' (в ' + curName + ')' : '') : null,
         'Погашение': d.sec.MATDATE && d.sec.MATDATE !== '0000-00-00' ? new Date(d.sec.MATDATE).toLocaleDateString('ru-RU') : null,
-        'Дюрация': durDays != null ? num(durDays / 365, 1) + ' лет' : null,
-        'Номинал': money(face, '₽')
+        'Дюрация': durYears != null ? num(durYears, 1) + ' лет' : null,
+        'Номинал': faceUnit === 'SUR' ? money(face, '₽') : '$' + num(face, 0) + ' (валютный)'
       },
-      bond: { yield: yieldPct, durYears: durDays != null ? durDays / 365 : null, matDate: d.sec.MATDATE },
+      bond: { yield: yieldPct, durYears: durYears, matDate: d.sec.MATDATE },
       ts: Date.now()
     };
+  }
+
+  /** Рублёвая цена одной облигации: котировка в % от номинала,
+      у замещающих номинал валютный — умножаем на курс ЦБ */
+  function bondRubPrice(it) {
+    if (!it || it.price == null) return null;
+    const face = it.face || 1000;
+    let base = it.price * face / 100;
+    if (it.faceUnit === 'USD') base *= (state.fx.USD || 1);
+    else if (it.faceUnit === 'EUR') base *= (state.fx.EUR || 1);
+    return base;
   }
 
   function loadMoex() {
     const custom = state.custom.map(s => String(s).toUpperCase().trim()).filter(Boolean);
     const shareList = WATCH.shares.concat(WATCH.funds.map(f => Object.assign({ group: 'funds' }, f)));
     const shareIds = shareList.map(s => s.secid).concat(custom);
-    const idxIds = WATCH.indices.map(s => s.secid);
-    const bondIds = WATCH.bonds.map(s => s.secid);
+    const bondList = WATCH.bonds.concat(WATCH.corp);
 
     const metaBy = {};
     shareList.forEach(s => { metaBy[s.secid] = s; });
     WATCH.indices.forEach(s => { metaBy[s.secid] = s; });
-    WATCH.bonds.forEach(s => { metaBy[s.secid] = s; });
+    bondList.forEach(s => { metaBy[s.secid] = s; });
 
-    const jobs = [
-      fetchBoard('shares', 'TQBR', shareIds).then(rows => {
-        Object.keys(rows).forEach(id => {
-          const meta = metaBy[id] || { name: id, group: 'custom' };
-          const d = rows[id];
-          const isFund = /ETF|ПИФ/i.test(String(d.sec.SHORTNAME || '') + String(d.sec.SECNAME || ''));
-          if (meta.group === 'custom' && isFund) meta.group = 'funds';
-          applyShare(id, d, meta);
-        });
-      }),
-      fetchBoard('bonds', 'TQOB', bondIds).then(rows => {
+    const jobs = [];
+
+    /* акции, фонды и свои тикеры — борд TQBR */
+    jobs.push(fetchBoard('shares', 'TQBR', shareIds).then(rows => {
+      Object.keys(rows).forEach(id => {
+        const meta = metaBy[id] || { name: id, group: 'custom' };
+        const d = rows[id];
+        if (meta.group === 'custom' && /ETF|ПИФ/i.test(String(d.sec.SHORTNAME) + String(d.sec.SECNAME))) meta.group = 'funds';
+        applyShare(id, d, meta);
+      });
+    }));
+
+    /* облигации: ОФЗ и корпоративные/замещающие — по своим бордам */
+    const bondBoards = {};
+    bondList.forEach(b => { (bondBoards[b.board] = bondBoards[b.board] || []).push(b.secid); });
+    Object.keys(bondBoards).forEach(board => {
+      jobs.push(fetchBoard('bonds', board, bondBoards[board]).then(rows => {
         Object.keys(rows).forEach(id => applyBond(id, rows[id], metaBy[id] || { name: id }));
-      }),
-      fetchBoard('index', 'SNDX', idxIds).then(rows => {
+      }));
+    });
+
+    /* индексы — по своим бордам */
+    const idxBoards = {};
+    WATCH.indices.forEach(x => { (idxBoards[x.board] = idxBoards[x.board] || []).push(x.secid); });
+    Object.keys(idxBoards).forEach(board => {
+      jobs.push(fetchBoard('index', board, idxBoards[board]).then(rows => {
         Object.keys(rows).forEach(id => applyIndex(id, rows[id], metaBy[id] || { name: id }));
-      })
-    ];
+      }));
+    });
 
     return Promise.all(jobs).then(() => {
-      // тикеры из «своего списка», не найденные на TQBR, ищем среди облигаций и индексов
-      const notFound = custom.filter(t => !state.items['sh:' + t]);
-      if (!notFound.length) return;
-      return fetchBoard('bonds', 'TQOB', notFound).then(rows => {
-        Object.keys(rows).forEach(id => applyBond(id, rows[id], { name: id }));
-        const left = notFound.filter(t => !state.items['bd:' + t]);
-        if (!left.length) return;
-        return fetchBoard('index', 'SNDX', left).then(rows2 => {
-          Object.keys(rows2).forEach(id => applyIndex(id, rows2[id], { name: id }));
+      /* свои тикеры: ищем среди облигаций и индексов, если не нашли на TQBR */
+      const left = custom.filter(t => !state.items['sh:' + t]);
+      if (!left.length) return;
+      return fetchBoard('bonds', 'TQCB', left).then(rows => {
+        Object.keys(rows).forEach(id => applyBond(id, rows[id], { name: id, group: 'custom' }));
+        const left2 = left.filter(t => !state.items['bd:' + t]);
+        if (!left2.length) return;
+        return fetchBoard('bonds', 'TQOB', left2).then(rows2 => {
+          Object.keys(rows2).forEach(id => applyBond(id, rows2[id], { name: id, group: 'custom' }));
+          const left3 = left2.filter(t => !state.items['bd:' + t]);
+          if (!left3.length) return;
+          return fetchBoard('index', 'SNDX', left3).then(rows3 => {
+            Object.keys(rows3).forEach(id => applyIndex(id, rows3[id], { name: id }));
+          });
         });
       });
     });
@@ -245,27 +291,6 @@
     });
   }
 
-  /* ---------- Мировые ETF (Twelve Data) ---------- */
-  function loadGlobal() {
-    const key = get('tdKey', '');
-    if (!key) return Promise.resolve(null);
-    const syms = WATCH.global.map(g => g.ticker).join(',');
-    return fetchJSON('https://api.twelvedata.com/quote?symbol=' + encodeURIComponent(syms) +
-      '&apikey=' + encodeURIComponent(key), 12000).then(d => {
-      WATCH.global.forEach(g => {
-        const row = d[g.ticker];
-        if (!row || row.close == null) return;
-        const usd = parseFloat(row.close);
-        state.items['gl:' + g.ticker] = {
-          group: 'global', name: g.name, ticker: g.ticker,
-          price: usd, rub: state.fx.USD ? usd * state.fx.USD : null, cur: 'USD', src: 'Twelve Data',
-          change: row.percent_change != null ? parseFloat(row.percent_change) : null,
-          extra: { 'Валюта': row.currency || 'USD' }, ts: Date.now()
-        };
-      });
-    });
-  }
-
   /* ---------- Основная загрузка ---------- */
   function loadAll(force) {
     const cached = get('priceCache', null);
@@ -285,23 +310,21 @@
     return Promise.all([
       safe(loadMoex).catch(() => { state.errors.push('MOEX недоступен'); }),
       safe(loadCBR).catch(() => { state.errors.push('ЦБ РФ недоступен'); })
-    ])
-      .then(() => safe(loadGlobal).catch(() => { state.errors.push('Twelve Data недоступен'); }))
-      .then(() => {
-        state.updated = Date.now();
-        const got = Object.keys(state.items).length;
-        if (got) {
-          set('priceCache', { ts: state.updated, items: state.items, fx: state.fx });
-          setStatus('Обновлено ' + new Date(state.updated).toLocaleTimeString('ru-RU') +
-            ' · инструментов: ' + got + (state.errors.length ? ' · ' + state.errors.join(', ') : ''), 'ok');
-        } else {
-          const old = get('priceCache', null);
-          if (old && old.items) { state.items = old.items; state.fx = old.fx || state.fx; }
-          setStatus('Нет доступа к сети — показаны последние сохранённые данные. Любую цену можно ввести вручную.', 'warn');
-        }
-        render();
-        global.Portfolio && global.Portfolio.refresh();
-      });
+    ]).then(() => {
+      state.updated = Date.now();
+      const got = Object.keys(state.items).length;
+      if (got) {
+        set('priceCache', { ts: state.updated, items: state.items, fx: state.fx });
+        setStatus('Обновлено ' + new Date(state.updated).toLocaleTimeString('ru-RU') +
+          ' · инструментов: ' + got + (state.errors.length ? ' · ' + state.errors.join(', ') : ''), 'ok');
+      } else {
+        const old = get('priceCache', null);
+        if (old && old.items) { state.items = old.items; state.fx = old.fx || state.fx; }
+        setStatus('Нет доступа к сети — показаны последние сохранённые данные. Любую цену можно ввести вручную.', 'warn');
+      }
+      render();
+      global.Portfolio && global.Portfolio.refresh();
+    });
   }
 
   function setStatus(text, kind) {
@@ -311,14 +334,16 @@
   }
 
   /* ---------- Доступ к данным ---------- */
-  /** Ищет инструмент по тикеру (для портфеля) */
   function livePriceByTicker(ticker) {
     const t = String(ticker || '').trim().toUpperCase();
     if (!t) return null;
     for (const k in state.items) {
       const it = state.items[k];
       if (it.ticker.toUpperCase() === t) {
-        return { price: it.price, rub: it.rub, src: it.src, change: it.change, ts: it.ts, cur: it.cur, isBond: !!it.isBond };
+        return {
+          price: it.price, rub: it.isBond ? bondRubPrice(it) : it.rub, src: it.src,
+          change: it.change, ts: it.ts, cur: it.cur, isBond: !!it.isBond
+        };
       }
     }
     if (state.manual[t] != null && state.manual[t] !== '') {
@@ -332,12 +357,12 @@
     return Object.keys(state.items).map(k => state.items[k]).filter(it => it.group === name);
   }
 
-  /** Порядок как в списке наблюдения: индексы, акции, фонды, облигации по сроку */
   const DEFAULT_ORDER = [].concat(
     WATCH.indices.map(x => x.secid), WATCH.shares.map(x => x.secid),
     WATCH.funds.map(x => x.secid), WATCH.bonds.map(x => x.secid),
-    WATCH.fx.map(x => x.code), WATCH.global.map(x => x.ticker)
+    WATCH.corp.map(x => x.secid), WATCH.fx.map(x => x.code)
   );
+
   function sortItems(items) {
     return items.slice().sort((a, b) => {
       if (a.isBond && b.isBond && a.bond && b.bond) {
@@ -363,7 +388,6 @@
 
   function fmtPrice(it) {
     if (it.price == null) return '—';
-    if (it.cur === 'USD') return '$' + num(it.price, 2);
     const d = it.dec != null ? it.dec : 2;
     const suffix = it.isBond ? '%' : (it.isIndex ? '\u00A0п.' : '\u00A0₽');
     return num(it.price, d) + suffix;
@@ -378,7 +402,8 @@
   function renderTicker() {
     const box = $('#ticker');
     if (!box) return;
-    const want = ['idx:IMOEX', 'idx:RGBI', 'sh:SBER', 'sh:GAZP', 'sh:LKOH', 'fx:USD', 'fx:CNY', 'sh:GOLD', 'sh:TMOS'];
+    const want = ['idx:MCFTR', 'idx:IMOEX', 'idx:RGBI', 'sh:SBER', 'sh:GAZP', 'sh:LKOH',
+      'sh:TMOS', 'sh:GOLD', 'sh:LQDT', 'fx:USD', 'fx:CNY'];
     const items = want.map(k => state.items[k]).filter(Boolean).map(it => {
       const ch = it.change;
       const cls = ch == null ? '' : (ch >= 0 ? 'up' : 'down');
@@ -395,22 +420,26 @@
     const box = $('#marketGroups');
     if (!box) return;
 
-    const order = ['indices', 'shares', 'funds', 'bonds', 'custom', 'global', 'fx'];
+    const order = ['indices', 'shares', 'funds', 'bonds', 'corp', 'custom', 'fx'];
     let html = '';
 
     order.forEach(g => {
       const items = sortItems(groupOf(g));
       if (!items.length) return;
       html += `<h3 class="market-group-title">${esc(GROUP_TITLES[g])}</h3>`;
-      if (g === 'bonds') html += renderBondTable(items);
+      if (g === 'bonds' || g === 'corp') html += renderBondTable(items, g);
       else if (g === 'indices') html += renderIndexTable(items);
-      else html += renderSimpleTable(items, g);
+      else if (g === 'custom') {
+        /* в «своих тикерах» могут быть и акции, и облигации */
+        const b = items.filter(i => i.isBond), rest = items.filter(i => !i.isBond);
+        if (rest.length) html += renderSimpleTable(rest, g);
+        if (b.length) html += renderBondTable(b, 'bonds');
+      } else html += renderSimpleTable(items, g);
     });
 
     if (!html) html = '<p class="muted" style="padding:20px">Данные ещё не загружены. Нажмите «Обновить данные».</p>';
     box.innerHTML = html;
 
-    // ручной ввод цены
     $$('.manual-price', box).forEach(inp => {
       inp.addEventListener('change', () => {
         const k = inp.dataset.key;
@@ -420,14 +449,13 @@
         render();
       });
     });
-    // кнопка «в лесенку»
     $$('[data-ladder]', box).forEach(btn => {
       btn.addEventListener('click', () => {
         const it = state.items[btn.dataset.ladder];
         if (!it || !it.bond) return;
         const yieldEl = $('#lCoupon'), yearsEl = $('#lYears'), yearsR = $('#lYearsR');
         if (it.bond.yield != null && yieldEl) {
-          yieldEl.value = numRaw(it.bond.yield, 2);
+          yieldEl.value = Number(it.bond.yield).toFixed(2);
           yieldEl.dispatchEvent(new Event('input', { bubbles: true }));
         }
         if (it.bond.durYears != null && yearsEl) {
@@ -441,8 +469,6 @@
       });
     });
   }
-
-  function numRaw(v, d) { return Number(v).toFixed(d); }
 
   function manualCell(key) {
     const v = state.manual[key] != null ? state.manual[key] : '';
@@ -458,9 +484,9 @@
         <td><b>${esc(it.name)}</b><span class="row-sub">${esc(it.ticker)}</span></td>
         <td class="num"><b>${fmtPrice(it)}</b></td>
         <td class="num">${chgHtml(it.change)}</td>
-        <td class="num">${chgHtml(it.extra['Изм. за месяц'])}</td>
-        <td class="num">${chgHtml(it.extra['Изм. с начала года'])}</td>
-        <td class="muted small">${esc(it.extra['Макс/мин за год'] || '—')}</td>
+        <td class="num">${chgHtml(it.extra['За месяц'])}</td>
+        <td class="num">${chgHtml(it.extra['С начала года'])}</td>
+        <td class="muted small">${esc(it.extra['Диапазон за год'] || '—')}</td>
         <td class="muted small">${esc(it.src)}</td>
       </tr>`).join('')}</tbody></table></div>`;
   }
@@ -484,44 +510,44 @@
       }).join('')}</tbody></table></div>`;
   }
 
-  function renderBondTable(items) {
+  function renderBondTable(items, group) {
+    const hint = group === 'corp'
+      ? `Замещающие облигации — это рублёвые бумаги российских эмитентов, привязанные к валюте:
+         номинал и купон считаются в долларах, а расчёты идут в рублях по курсу ЦБ. Поэтому цена
+         одной бумаги — около 80–95 тыс. ₽ (номинал $1 000), а доходность ниже рублёвых выпусков:
+         валютная защита стоит денег. Главное — смотреть на доходность и на эмитента:
+         государственные компании и крупнейшие корпорации надёжнее прочих.`
+      : `Цена облигации котируется в процентах от номинала: 93,2% при номинале 1 000 ₽ — это 932 ₽.
+         Доходность — эффективная к погашению на текущий момент. Дюрация показывает чувствительность
+         к ставке: падение ставки на 1 п.п. поднимает цену примерно на величину дюрации в процентах.
+         Флоатеры (ОФЗ-ПК) платят переменный купон — они выигрывают, когда ставка растёт.`;
     return `<div class="table-wrap"><table class="table">
       <thead><tr><th>Выпуск</th><th>Тикер</th><th class="num">Цена, %</th><th class="num">Цена, ₽</th>
       <th class="num">НКД</th><th class="num">Купон</th><th class="num">Доходность</th>
       <th class="num">Погашение</th><th class="num">Дюрация</th><th>За день</th><th></th></tr></thead>
       <tbody>${items.map(it => {
         const key = Object.keys(state.items).find(k => state.items[k] === it);
+        const rub = bondRubPrice(it);
+        const curNote = it.faceUnit !== 'SUR' ? `<span class="row-sub">по курсу ЦБ</span>` : '';
         return `<tr>
           <td><b>${esc(it.name)}</b><span class="row-sub">номинал ${esc(it.extra['Номинал'])}</span></td>
           <td><code>${esc(it.ticker)}</code></td>
           <td class="num">${num(it.price, 3)}%</td>
-          <td class="num"><b>${esc(it.extra['Цена, ₽'])}</b></td>
+          <td class="num"><b>${rub != null ? money(rub, '₽') : '—'}</b>${curNote}</td>
           <td class="num muted">${esc(it.extra['НКД'] || '—')}</td>
           <td class="num">${esc(it.extra['Купон'] || '—')}</td>
           <td class="num pos"><b>${esc(it.extra['Доходность'] || '—')}</b></td>
           <td class="num">${esc(it.extra['Погашение'] || '—')}</td>
           <td class="num">${esc(it.extra['Дюрация'] || '—')}</td>
           <td class="num">${chgHtml(it.change)}</td>
-          <td><button class="btn small ghost" data-ladder="${key}" title="Подставить доходность и срок в конструктор лесенки">в лесенку</button></td>
+          <td><button class="btn small ghost" data-ladder="${key}" title="Подставить доходность и дюрацию в конструктор лесенки">в лесенку</button></td>
         </tr>`;
       }).join('')}</tbody></table></div>
-      <p class="hint">Цена облигации котируется в процентах от номинала: 52,7% при номинале 1 000 ₽ — это 527 ₽.
-        Доходность — эффективная к погашению на текущий момент. Дюрация показывает чувствительность к ставке:
-        падение ставки на 1 п.п. поднимает цену примерно на величину дюрации в процентах.
-        К сумме покупки добавляется НКД — накопленный купонный доход продавцу.</p>`;
+      <p class="hint">${hint}</p>`;
   }
 
   /* ---------- Инициализация ---------- */
   function init() {
-    const keyInput = $('#tdKey');
-    if (keyInput) {
-      keyInput.value = get('tdKey', '');
-      on($('#tdKeySave'), 'click', () => {
-        set('tdKey', keyInput.value.trim());
-        setStatus('Ключ сохранён. Обновляю…', 'loading');
-        loadAll(true);
-      });
-    }
     const cusInput = $('#customTickers');
     if (cusInput) {
       cusInput.value = state.custom.join(', ');

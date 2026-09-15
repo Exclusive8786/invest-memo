@@ -110,7 +110,7 @@
       }
       if (rows.length && c.total === 0) {
         msg += (msg ? ' ' : '') + 'Текущие цены пока неизвестны — впишите их в колонку «Текущая цена» ' +
-          'или укажите тикер из списка живых котировок (BTC, ETH, XAU, SPY, QQQ, VOO).';
+          'или укажите тикер из котировок Мосбиржи (SBER, GAZP, TMOS, GOLD, SU26238RMFS4).';
         if (tw.className === 'hint ok') tw.className = 'hint';
       }
       tw.textContent = msg;

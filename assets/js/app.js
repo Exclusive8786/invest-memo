@@ -137,7 +137,7 @@
   function renderPortfolioCompare() {
     const box = $('#compareTable');
     if (!box) return;
-    const classes = ['equity', 'bond', 'gold', 'cash'];
+    const classes = ['equity', 'bond', 'fx', 'gold', 'cash'];
     const head = `<thead><tr><th>Класс</th>${D.PORTFOLIOS.map(p => `<th class="num">${esc(p.name)}</th>`).join('')}</tr></thead>`;
     const body = classes.map(c => {
       const cells = D.PORTFOLIOS.map(p => {
